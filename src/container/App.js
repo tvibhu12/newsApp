@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import Article from '../components/Article';
-import { Dropdown } from 'semantic-ui-react'
-
+import { Dropdown , Input}  from 'semantic-ui-react'
+import './App.css'
 const friendOptions = [
   {
     text: 'Reuters',
@@ -60,6 +60,7 @@ export default class App extends Component {
       sortBy: 'latest',
       source: 'buzzfeed',
       articles: [],
+      query:''
     }
 
     this.getArticles = this.getArticles.bind(this);
@@ -79,8 +80,19 @@ export default class App extends Component {
     .then( (response) => response.json())
     .then( (json) => this.setState({articles: json.articles}));
   }
+searching=(e)=>
+{
+  this.setState({query:e.target.value})
+
+}
+
 
   render() {
+            //Filter Users
+            const filterdArticles=this.state.articles.filter((article)=>{
+              return article.title.toLocaleLowerCase().includes(this.state.query.toLocaleLowerCase());
+          })
+  
     return (
 
       <div className="container">
@@ -94,10 +106,11 @@ export default class App extends Component {
             options={friendOptions}
             defaultValue={friendOptions[0].value}
           />
+          <Input placeholder='Search...'  onChange={this.searching}/>
         </div>
         <div className="articles">
           {
-            this.state.articles.length ? this.state.articles.map((item, index)=>{
+            filterdArticles.length ? filterdArticles.map((item, index)=>{
               return <Article
                 key={index}
                 title={item.title}
